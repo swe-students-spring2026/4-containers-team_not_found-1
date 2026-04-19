@@ -36,6 +36,12 @@ class StubRepository:
         )
         return "event-123"
 
+    def fetch_recent(self, limit: int = 10):
+        return self.saved[:limit]
+
+    def delete_prediction(self, record_id: str) -> bool:
+        return record_id == "event-123"
+
 
 def _settings() -> Settings:
     return Settings(
@@ -122,3 +128,35 @@ def test_predict_endpoint_validates_top_k():
 
     assert response.status_code == 400
     assert "top_k" in response.get_json()["error"]
+
+def test_history_endpoint_returns_records():
+    app = create_app(
+        settings=_settings(),
+        predictor=StubPredictor(),
+        repository=StubRepository(),
+    )
+    client = app.test_client()
+    response = client.get("/history")
+    assert response.status_code == 200
+    assert "records" in response.get_json()
+
+def test_delete_history_endpoint_deletes():
+    app = create_app(
+        settings=_settings(),
+        predictor=StubPredictor(),
+        repository=StubRepository(),
+    )
+    client = app.test_client()
+    response = client.delete("/history/event-123")
+    assert response.status_code == 200
+    assert response.get_json()["status"] == "deleted"
+
+def test_delete_history_endpoint_not_found():
+    app = create_app(
+        settings=_settings(),
+        predictor=StubPredictor(),
+        repository=StubRepository(),
+    )
+    client = app.test_client()
+    response = client.delete("/history/unknown")
+    assert response.status_code == 404
