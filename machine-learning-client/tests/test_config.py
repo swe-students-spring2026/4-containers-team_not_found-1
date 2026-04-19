@@ -6,6 +6,7 @@ from ml_client.config import DEFAULT_LABELS, load_settings
 def test_load_settings_defaults(monkeypatch):
     """Default settings are returned when env vars are absent."""
 
+    monkeypatch.setattr("ml_client.config.load_dotenv", lambda **kwargs: False)
     monkeypatch.delenv("MONGO_URI", raising=False)
     monkeypatch.delenv("MONGO_DB", raising=False)
     monkeypatch.delenv("MONGO_COLLECTION", raising=False)
@@ -28,6 +29,7 @@ def test_load_settings_defaults(monkeypatch):
 def test_load_settings_from_env(monkeypatch):
     """Environment variables override defaults."""
 
+    monkeypatch.setattr("ml_client.config.load_dotenv", lambda **kwargs: False)
     monkeypatch.setenv("DOODLE_LABELS", "cat,dog,bird")
     monkeypatch.setenv("TOP_K", "5")
     monkeypatch.setenv("MONGO_DB", "custom_db")
