@@ -126,7 +126,7 @@ def index():
         return image_description, 200
 
 @app.route("/history", methods=["GET"])
-def index():
+def history():
     if request.method == "GET":
         # TODO
         return render_template("history.html")
