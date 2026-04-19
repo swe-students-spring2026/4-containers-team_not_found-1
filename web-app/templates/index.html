@@ -16,6 +16,11 @@
             font-size: 35px;
             font-weight: bold;
         }
+        .instructions {
+            text-align: center;
+            font-size: 25px;
+            color: red;
+        }
         .spacer {
             height: 10px;
         }
@@ -59,7 +64,9 @@
 
     <body>
         <div class="content">
-            <div class="title">Doodle! Not Found</div>
+            <div class="title">Doodle! Not Found | <a href="/">Draw</a> | <a href="/history">History</a></div>
+            <div class="spacer"></div>
+            <div class="instructions">Instructions: Draw a {{thing}}</div>
             <div class="spacer"></div>
             <div class="top-buttons">
                 <button id="button-undo" onclick="undo()" class="button-undo">&#8592;</button>
@@ -78,6 +85,8 @@
     </body>
 
     <script>
+        const thing = "{{thing}}";
+
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
@@ -125,7 +134,7 @@
                     body: new Uint8Array(await blob.arrayBuffer()),
                     headers: {'Content-Type': 'application/octet-stream'}
                 });
-                document.getElementById("description").innerHTML = "Description: " + await response.text();
+                document.getElementById("description").innerHTML = "You drew a " + await response.text();
             }, 'image/png');
         }
 
