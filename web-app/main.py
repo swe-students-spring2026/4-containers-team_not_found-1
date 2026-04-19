@@ -125,5 +125,11 @@ def index():
         image_description = "[temp description of doodle]"
         return image_description, 200
 
+@app.route("/history", methods=["GET"])
+def index():
+    if request.method == "GET":
+        # TODO
+        return render_template("history.html")
+
 if __name__ == "__main__":
     app.run(debug=True)
