@@ -1,4 +1,5 @@
 ![Lint Status](https://github.com/swe-students-spring2026/4-containers-team_not_found-1/actions/workflows/lint.yml/badge.svg)
+![ML Client CI](https://github.com/swe-students-spring2026/4-containers-team_not_found-1/actions/workflows/ml-client.yml/badge.svg)
 ![Event Logger CI](https://github.com/swe-students-spring2026/4-containers-team_not_found-1/actions/workflows/event-logger.yml/badge.svg)
 
 # Doodle Not Found (Team: team_not_found)
