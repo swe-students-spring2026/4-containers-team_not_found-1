@@ -8,9 +8,6 @@
     </head>
 
     <style>
-        .content {
-            
-        }
         .title {
             text-align: center;
             font-size: 35px;
@@ -19,13 +16,80 @@
         .spacer {
             height: 10px;
         }
+        .history-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .record {
+            border: 1px solid #ccc;
+            padding: 10px;
+            display: flex;
+            gap: 20px;
+            width: 80%;
+            max-width: 600px;
+            background: #fff;
+            border-radius: 8px;
+        }
+        .record-image img {
+            border: 1px solid #eee;
+            background: url('data:image/svg+xml;utf8,<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg"><rect width="200" height="200" fill="%23fff"/></svg>');
+            max-width: 150px;
+        }
+        .record-details {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            flex: 1;
+        }
+        .delete-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            align-self: flex-start;
+            margin-top: 10px;
+        }
+        .delete-btn:hover {
+            background-color: #cc0000;
+        }
     </style>
 
     <body>
         <div class="content">
             <div class="title">Doodle! Not Found | <a href="/">Draw</a> | <a href="/history">History</a></div>
             <div class="spacer"></div>
-            TODO: history page
+            <div class="history-container">
+                {% if records %}
+                    {% for record in records %}
+                    <div class="record">
+                        <div class="record-image">
+                            {% if record.metadata and record.metadata.image_b64 %}
+                                <img src="data:image/png;base64,{{ record.metadata.image_b64 }}" alt="Doodle">
+                            {% endif %}
+                        </div>
+                        <div class="record-details">
+                            <h3>Predictions</h3>
+                            <ul>
+                                {% for pred in record.predictions[:2] %}
+                                    <li><strong>{{ pred.label }}</strong> ({{ "%.1f"|format(pred.confidence * 100) }}%)</li>
+                                {% endfor %}
+                            </ul>
+                            <small>Date: {{ record.created_at }}</small>
+                            <form method="POST" action="/history/{{ record.id }}/delete" style="margin-top: 10px;">
+                                <button type="submit" class="delete-btn">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p>No history available.</p>
+                {% endif %}
+            </div>
         </div>
     </body>
 
