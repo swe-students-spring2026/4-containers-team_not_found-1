@@ -13,8 +13,12 @@ app = Flask(__name__)
 # get the secret key from env
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-secret")
 
-ML_CLIENT_PREDICT_URL = os.getenv("ML_CLIENT_PREDICT_URL", "http://localhost:8000/predict")
-ML_CLIENT_HISTORY_URL = os.getenv("ML_CLIENT_HISTORY_URL", "http://localhost:8000/history")
+ML_CLIENT_PREDICT_URL = os.getenv(
+    "ML_CLIENT_PREDICT_URL", "http://localhost:8000/predict"
+)
+ML_CLIENT_HISTORY_URL = os.getenv(
+    "ML_CLIENT_HISTORY_URL", "http://localhost:8000/history"
+)
 ML_CLIENT_TIMEOUT_SECONDS = float(os.getenv("ML_CLIENT_TIMEOUT_SECONDS", "30"))
 
 things = [
@@ -44,9 +48,11 @@ things = [
     "zigzag",
 ]
 
+
 def get_random_thing():
     """Return a random item from the list of things."""
     return random.choice(things)
+
 
 @app.route("/", methods=["GET", "POST"])
 def index():
@@ -57,7 +63,7 @@ def index():
         return render_template("index.html", thing=thing)
 
     if request.method == "POST":
-        draw_instruction = request.headers.get('Draw-Instruction', 'unknown')
+        draw_instruction = request.headers.get("Draw-Instruction", "unknown")
         image_bytes = request.get_data()
         if not image_bytes:
             return "no image bytes provided", 400
@@ -94,6 +100,7 @@ def index():
 
     return "method not allowed", 405
 
+
 @app.route("/history", methods=["GET"])
 def history():
     """Retrieve and display the prediction history."""
@@ -110,6 +117,7 @@ def history():
         pass
     return render_template("history.html", records=records)
 
+
 @app.route("/history/<string:record_id>/delete", methods=["POST"])
 def delete_history(record_id):
     """Delete a prediction record and redirect to history."""
@@ -123,6 +131,7 @@ def delete_history(record_id):
 
     # After deleting (or failing), redirect to the history page
     return redirect("/history")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
