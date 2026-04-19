@@ -2,7 +2,7 @@
 
 import mongomock
 
-from ml_client.repository import MongoPredictionRepository
+from ml_client.mongodb import MongoPredictionRepository
 from ml_client.service import DoodleInferenceService
 
 

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 from typing import Any
+from bson.objectid import ObjectId
 
 from pymongo import MongoClient
 
@@ -49,3 +50,12 @@ class MongoPredictionRepository:
             item["id"] = str(item.pop("_id"))
             records.append(item)
         return records
+
+    def delete_prediction(self, record_id: str) -> bool:
+        """Delete a prediction record by its ID."""
+
+        try:
+            result = self._collection.delete_one({"_id": ObjectId(record_id)})
+            return result.deleted_count > 0
+        except Exception:
+            return False

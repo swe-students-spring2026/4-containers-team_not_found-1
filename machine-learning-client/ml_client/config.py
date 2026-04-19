@@ -5,9 +5,6 @@ import os
 
 from dotenv import load_dotenv
 
-DEFAULT_LABELS = ("cat", "house", "tree", "car", "bicycle")
-
-
 @dataclass(frozen=True)
 class Settings:
     """Configuration values loaded from environment variables."""
@@ -21,6 +18,11 @@ class Settings:
     hf_task: str
     hf_device: int
 
+DEFAULT_LABELS = (
+    "airplane", "banana", "computer", "dog", "elephant", "fish", "garden", "helmet",
+    "ice cream", "jail", "key", "lantern", "motorbike", "necklace", "onion", "penguin",
+    "raccoon", "sandwich", "table", "underwear", "vase", "watermelon", "yoga", "zigzag"
+)
 
 def _parse_labels(raw_labels: str | None) -> tuple[str, ...]:
     if not raw_labels:
@@ -56,9 +58,11 @@ def load_settings(env_file: str | None = None) -> Settings:
         mongo_uri=os.getenv("MONGO_URI", "mongodb://localhost:27017"),
         mongo_db=os.getenv("MONGO_DB", "doodle_game"),
         mongo_collection=os.getenv("MONGO_COLLECTION", "predictions"),
-        top_k=_parse_positive_int(os.getenv("TOP_K"), 3, "TOP_K"),
+        top_k=_parse_positive_int(os.getenv("TOP_K"), 2, "TOP_K"),
         labels=_parse_labels(os.getenv("DOODLE_LABELS")),
-        hf_model_id=os.getenv("HF_MODEL_ID", "nateraw/quickdraw-model"),
+        hf_model_id=os.getenv(
+            "HF_MODEL_ID", "ilyesdjerfaf/vit-base-patch16-224-in21k-quickdraw"
+        ),
         hf_task=os.getenv("HF_TASK", "image-classification"),
         hf_device=_parse_int(os.getenv("HF_DEVICE"), -1),
     )

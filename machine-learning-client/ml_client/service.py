@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Protocol
 
-from .repository import MongoPredictionRepository
+from .mongodb import MongoPredictionRepository
 
 
 class SupportsPrediction(Protocol):
@@ -12,7 +12,7 @@ class SupportsPrediction(Protocol):
 
     version: str
 
-    def predict(self, raw_image: bytes, top_k: int = 3) -> list[Any]:
+    def predict(self, raw_image: bytes, top_k: int = 2) -> list[Any]:
         """Predict labels from image bytes."""
 
 

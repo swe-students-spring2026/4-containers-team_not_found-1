@@ -43,7 +43,7 @@ class PretrainedDoodlePredictor:
         cls,
         model_id: str,
         labels: tuple[str, ...],
-        task: str = "zero-shot-image-classification",
+        task: str = "image-classification",
         device: int = -1,
     ) -> "PretrainedDoodlePredictor":
         """Create a predictor from a Hugging Face model ID."""
@@ -64,14 +64,21 @@ class PretrainedDoodlePredictor:
             task=task,
         )
 
-    def predict(self, raw_image: bytes, top_k: int = 3) -> list[Prediction]:
+    def predict(self, raw_image: bytes, top_k: int = 2) -> list[Prediction]:
         """Predict the most likely doodle classes from an input image."""
 
         if top_k < 1:
             raise ValueError("top_k must be greater than 0.")
 
         with Image.open(io.BytesIO(raw_image)) as opened:
-            image = opened.convert("RGB")
+            if opened.mode in ("RGBA", "LA") or (
+                opened.mode == "P" and "transparency" in opened.info
+            ):
+                background = Image.new("RGB", opened.size, (255, 255, 255))
+                background.paste(opened, mask=opened.convert("RGBA"))
+                image = background
+            else:
+                image = opened.convert("RGB")
 
         if self._task == "zero-shot-image-classification":
             results = self._classifier(

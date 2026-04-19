@@ -7,9 +7,10 @@ Main features:
 - pretrained Quick Draw image recognition
 - top-k prediction output for a doodle image
 - MongoDB persistence for prediction metadata
+- HTTP API endpoint for web-app integration
 
 Default pretrained model settings:
-- HF_MODEL_ID=nateraw/quickdraw-model
+- HF_MODEL_ID=ilyesdjerfaf/vit-base-patch16-224-in21k-quickdraw
 - HF_TASK=image-classification
 - HF_DEVICE=-1 (CPU)
 
@@ -33,10 +34,17 @@ Quick start (no training)
 		 --image-path path/to/doodle.png \
 		 --source local-file-sensor
 
+5. Start HTTP API server (for web app integration)
+	 pipenv run python -m ml_client.api
+
+API endpoints:
+- GET /health
+- POST /predict (raw image bytes, content-type: application/octet-stream)
+
 Optional: override pretrained model
 pipenv run python -m ml_client.cli predict \
 	--env-file .env \
-	--hf-model-id WinKawaks/SketchXAI-Tiny-QuickDraw345 \
+	--hf-model-id ilyesdjerfaf/vit-base-patch16-224-in21k-quickdraw \
 	--hf-task image-classification \
 	--image-path path/to/doodle.png
 
