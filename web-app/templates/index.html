@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Doodle! Not Found</title>
+    </head>
+
+    <style>
+        .content {
+            
+        }
+        .title {
+            text-align: center;
+            font-size: 35px;
+            font-weight: bold;
+        }
+        .instructions {
+            text-align: center;
+            font-size: 25px;
+            color: red;
+        }
+        .spacer {
+            height: 10px;
+        }
+        .canvas {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .top-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .button-undo {
+            font-size: 20px;
+            height: 30px;
+        }
+        .button-color {
+            font-size: 20px;
+            height: 30px;
+        }
+        .button-color-active {
+            background-color: chocolate;
+        }
+        .button-upload {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .button-upload-inner {
+            font-size: 20px;
+            width: 200px;
+            height: 50px;
+        }
+        .description {
+            text-align: center;
+            font-size: 20px;
+            color: gray
+        }
+    </style>
+
+    <body>
+        <div class="content">
+            <div class="title">Doodle! Not Found | <a href="/">Draw</a> | <a href="/history">History</a></div>
+            <div class="spacer"></div>
+            <div class="instructions">Instructions: Draw a {{thing}}</div>
+            <div class="spacer"></div>
+            <div class="top-buttons">
+                <button id="button-undo" onclick="undo()" class="button-undo">&#8592;</button>
+                <button id="button-color-black" onclick="switchColor('black')" class="button-color button-color-active" style="color: black">&#9632;</button>
+                <button id="button-color-red"   onclick="switchColor('red')" class="button-color" style="color: red">&#9632;</button>
+                <button id="button-color-green" onclick="switchColor('green')" class="button-color" style="color: green">&#9632;</button>
+                <button id="button-color-blue"  onclick="switchColor('blue')" class="button-color" style="color: blue">&#9632;</button>
+            </div>
+            <div class="spacer"></div>
+            <div class="canvas"><canvas id="canvas" width="500" height="500" style="border:1px solid black;"></canvas></div>
+            <div class="spacer"></div>
+            <div class="button-upload"><button onclick="upload()" class="button-upload-inner">Upload</button></div>
+            <div class="spacer"></div>
+            <div id="description" class="description"></div>
+        </div>
+    </body>
+
+    <script>
+        const thing = "{{thing}}";
+
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        let isDrawing = false;
+        let currColor = 'black';
+        
+        let undoHistory = [];
+
+        canvas.addEventListener('mousedown', (e) => {
+            undoHistory.push(ctx.getImageData(0, 0, canvas.width, canvas.height));
+            isDrawing = true;
+            ctx.strokeStyle = currColor;
+            ctx.beginPath();
+            ctx.moveTo(e.offsetX, e.offsetY);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if(isDrawing) {
+                ctx.lineTo(e.offsetX, e.offsetY);
+                ctx.stroke();
+            }
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+        });
+
+        function undo() {
+            if(undoHistory.length == 0) return;
+            let img = undoHistory.pop();
+            ctx.putImageData(img, 0, 0);
+        }
+
+        function switchColor(color) {
+            currColor = color;
+            for(let e of document.getElementsByClassName("button-color")) {
+                e.classList.remove("button-color-active");
+            }
+            document.getElementById("button-color-" + color).classList.add("button-color-active");
+        }
+
+        function upload() {
+            canvas.toBlob(async (blob) => {
+                let response = await fetch('/', {
+                    method: 'POST',
+                    body: new Uint8Array(await blob.arrayBuffer()),
+                    headers: {'Content-Type': 'application/octet-stream'}
+                });
+                document.getElementById("description").innerHTML = "You drew a " + await response.text();
+            }, 'image/png');
+        }
+
+    </script>
+</html>
+
+
