@@ -82,8 +82,6 @@
     </body>
 
     <script>
-        const thing = "{{thing}}";
-
         const canvas = document.getElementById('canvas');
         const ctx = canvas.getContext('2d');
         let isDrawing = false;
@@ -129,7 +127,10 @@
                 let response = await fetch('/', {
                     method: 'POST',
                     body: new Uint8Array(await blob.arrayBuffer()),
-                    headers: {'Content-Type': 'application/octet-stream'}
+                    headers: {
+                        'Content-Type': 'application/octet-stream',
+                        'Draw-Instruction': '{{thing}}'
+                    }
                 });
                 document.getElementById("description").innerHTML = "You drew a " + await response.text();
             }, 'image/png');
