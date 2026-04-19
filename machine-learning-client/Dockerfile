@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.10
 
 WORKDIR /app
 
@@ -14,6 +14,9 @@ COPY Pipfile Pipfile.lock ./
 
 # Install dependencies system-wide
 RUN pipenv install --system --deploy
+
+# Install CPU-specific PyTorch explicitly to override any GPU defaults
+RUN pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu --no-cache-dir
 
 # Copy project files
 COPY . .

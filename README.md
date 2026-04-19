@@ -37,6 +37,6 @@ This single startup command securely initializes:
 
 ### 3. Start Drawing
 Once the instances are running, open your web browser to view the application:
-[http://localhost:5000](http://localhost:5000)
+[http://localhost:5001](http://localhost:5001)
 
 Draw a doodle representing the instruction, hit "Upload," and view the predictions and original images right inside the "History" tab!
