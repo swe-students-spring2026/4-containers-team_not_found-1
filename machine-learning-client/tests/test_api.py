@@ -36,6 +36,12 @@ class StubRepository:
         )
         return "event-123"
 
+    def fetch_recent(self, limit: int = 10):
+        return self.saved[:limit]
+
+    def delete_prediction(self, record_id: str) -> bool:
+        return record_id == "event-123"
+
 
 def _settings() -> Settings:
     return Settings(
@@ -53,7 +59,11 @@ def _settings() -> Settings:
 def test_health_endpoint_returns_ok():
     """Health endpoint should return healthy status and model version."""
 
-    app = create_app(settings=_settings(), predictor=StubPredictor(), repository=StubRepository())
+    app = create_app(
+        settings=_settings(),
+        predictor=StubPredictor(),
+        repository=StubRepository(),
+    )
     client = app.test_client()
 
     response = client.get("/health")
@@ -67,7 +77,11 @@ def test_health_endpoint_returns_ok():
 def test_predict_endpoint_returns_predictions_and_event_id():
     """Predict endpoint returns persisted event payload for valid image bytes."""
 
-    app = create_app(settings=_settings(), predictor=StubPredictor(), repository=StubRepository())
+    app = create_app(
+        settings=_settings(),
+        predictor=StubPredictor(),
+        repository=StubRepository(),
+    )
     client = app.test_client()
 
     response = client.post(
@@ -87,7 +101,11 @@ def test_predict_endpoint_returns_predictions_and_event_id():
 def test_predict_endpoint_rejects_empty_body():
     """Predict endpoint should reject requests that have no image bytes."""
 
-    app = create_app(settings=_settings(), predictor=StubPredictor(), repository=StubRepository())
+    app = create_app(
+        settings=_settings(),
+        predictor=StubPredictor(),
+        repository=StubRepository(),
+    )
     client = app.test_client()
 
     response = client.post("/predict", data=b"")
@@ -99,10 +117,49 @@ def test_predict_endpoint_rejects_empty_body():
 def test_predict_endpoint_validates_top_k():
     """Predict endpoint should validate top_k query parameter."""
 
-    app = create_app(settings=_settings(), predictor=StubPredictor(), repository=StubRepository())
+    app = create_app(
+        settings=_settings(),
+        predictor=StubPredictor(),
+        repository=StubRepository(),
+    )
     client = app.test_client()
 
     response = client.post("/predict?top_k=0", data=b"image")
 
     assert response.status_code == 400
     assert "top_k" in response.get_json()["error"]
+
+
+def test_history_endpoint_returns_records():
+    app = create_app(
+        settings=_settings(),
+        predictor=StubPredictor(),
+        repository=StubRepository(),
+    )
+    client = app.test_client()
+    response = client.get("/history")
+    assert response.status_code == 200
+    assert "records" in response.get_json()
+
+
+def test_delete_history_endpoint_deletes():
+    app = create_app(
+        settings=_settings(),
+        predictor=StubPredictor(),
+        repository=StubRepository(),
+    )
+    client = app.test_client()
+    response = client.delete("/history/event-123")
+    assert response.status_code == 200
+    assert response.get_json()["status"] == "deleted"
+
+
+def test_delete_history_endpoint_not_found():
+    app = create_app(
+        settings=_settings(),
+        predictor=StubPredictor(),
+        repository=StubRepository(),
+    )
+    client = app.test_client()
+    response = client.delete("/history/unknown")
+    assert response.status_code == 404

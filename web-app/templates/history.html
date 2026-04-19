@@ -73,6 +73,9 @@
                             {% endif %}
                         </div>
                         <div class="record-details">
+                            {% if record.metadata and record.metadata.instruction and record.metadata.instruction != 'unknown' %}
+                                <h3>Instruction: Draw a {{ record.metadata.instruction }}</h3>
+                            {% endif %}
                             <h3>Predictions</h3>
                             <ul>
                                 {% for pred in record.predictions[:2] %}

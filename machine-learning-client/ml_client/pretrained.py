@@ -49,6 +49,7 @@ class PretrainedDoodlePredictor:
         """Create a predictor from a Hugging Face model ID."""
 
         try:
+            # pylint: disable=import-outside-toplevel
             from transformers import pipeline
         except ImportError as error:  # pragma: no cover - dependency guard
             raise RuntimeError(
@@ -110,7 +111,9 @@ def _parse_zero_shot_results(results: Any) -> list[Prediction]:
         for item in results:
             if isinstance(item, dict) and "label" in item and "score" in item:
                 parsed.append(
-                    Prediction(label=str(item["label"]), confidence=float(item["score"]))
+                    Prediction(
+                        label=str(item["label"]), confidence=float(item["score"])
+                    )
                 )
         if parsed:
             return parsed

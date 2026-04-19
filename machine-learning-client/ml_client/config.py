@@ -5,6 +5,8 @@ import os
 
 from dotenv import load_dotenv
 
+
+# pylint: disable=too-many-instance-attributes
 @dataclass(frozen=True)
 class Settings:
     """Configuration values loaded from environment variables."""
@@ -18,11 +20,34 @@ class Settings:
     hf_task: str
     hf_device: int
 
+
 DEFAULT_LABELS = (
-    "airplane", "banana", "computer", "dog", "elephant", "fish", "garden", "helmet",
-    "ice cream", "jail", "key", "lantern", "motorbike", "necklace", "onion", "penguin",
-    "raccoon", "sandwich", "table", "underwear", "vase", "watermelon", "yoga", "zigzag"
+    "airplane",
+    "banana",
+    "computer",
+    "dog",
+    "elephant",
+    "fish",
+    "garden",
+    "helmet",
+    "ice cream",
+    "jail",
+    "key",
+    "lantern",
+    "motorbike",
+    "necklace",
+    "onion",
+    "penguin",
+    "raccoon",
+    "sandwich",
+    "table",
+    "underwear",
+    "vase",
+    "watermelon",
+    "yoga",
+    "zigzag",
 )
+
 
 def _parse_labels(raw_labels: str | None) -> tuple[str, ...]:
     if not raw_labels:

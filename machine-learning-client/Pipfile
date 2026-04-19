@@ -14,9 +14,9 @@ transformers = "*"
 torch = "*"
 
 [dev-packages]
-pytest = "*"
 pytest-cov = "*"
 mongomock = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.10"

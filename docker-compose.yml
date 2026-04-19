@@ -1,0 +1,48 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db                                                     
+
+  ml-client:
+    build:
+      context: ./machine-learning-client
+      dockerfile: Dockerfile
+    container_name: ml-client
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017
+      - MONGO_DB=doodle_game
+      - MONGO_COLLECTION=predictions
+      - HF_TASK=image-classification
+      - HF_MODEL_ID=ilyesdjerfaf/vit-base-patch16-224-in21k-quickdraw
+      - HF_DEVICE=-1
+      - TOP_K=2
+      - ML_CLIENT_HOST=0.0.0.0
+      - ML_CLIENT_PORT=8000
+    depends_on:
+      - mongodb
+
+  web-app:
+    build:
+      context: ./web-app
+      dockerfile: Dockerfile
+    container_name: web-app
+    ports:
+      - "5001:5000"
+    environment:
+      - FLASK_ENV=development
+      - ML_CLIENT_PREDICT_URL=http://ml-client:8000/predict
+      - ML_CLIENT_HISTORY_URL=http://ml-client:8000/history
+      - ML_CLIENT_TIMEOUT_SECONDS=60
+    depends_on:
+      - ml-client
+
+volumes:
+  mongodb_data:

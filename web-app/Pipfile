@@ -10,6 +10,10 @@ flask = "*"
 requests = "*"
 
 [dev-packages]
+pytest = "*"
+pytest-cov = "*"
+pytest-flask = "*"
+responses = "*"
 
 [requires]
 python_version = "3.10"
