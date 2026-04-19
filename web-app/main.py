@@ -1,8 +1,8 @@
-from flask import Flask, render_template, request
 import os
 import random
 
 import requests
+from flask import Flask, redirect, render_template, request
 
 app = Flask(__name__)
 
@@ -41,10 +41,13 @@ things = [
 ]
 
 def get_random_thing():
+    """Return a random item from the list of things."""
     return random.choice(things)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    # pylint: disable=too-many-return-statements
+    """Render main page or handle image prediction upload."""
     if request.method == "GET":
         thing = get_random_thing()
         return render_template("index.html", thing=thing)
@@ -84,34 +87,36 @@ def index():
             return f"{label} ({confidence:.1%})", 200
         return str(label), 200
 
+    return "method not allowed", 405
+
 @app.route("/history", methods=["GET"])
 def history():
-    if request.method == "GET":
-        records = []
-        try:
-            response = requests.get(
-                ML_CLIENT_HISTORY_URL,
-                timeout=ML_CLIENT_TIMEOUT_SECONDS,
-            )
-            if response.status_code == 200:
-                payload = response.json()
-                records = payload.get("records", [])
-        except requests.RequestException:
-            pass
-        return render_template("history.html", records=records)
+    """Retrieve and display the prediction history."""
+    records = []
+    try:
+        response = requests.get(
+            ML_CLIENT_HISTORY_URL,
+            timeout=ML_CLIENT_TIMEOUT_SECONDS,
+        )
+        if response.status_code == 200:
+            payload = response.json()
+            records = payload.get("records", [])
+    except requests.RequestException:
+        pass
+    return render_template("history.html", records=records)
 
 @app.route("/history/<string:record_id>/delete", methods=["POST"])
 def delete_history(record_id):
+    """Delete a prediction record and redirect to history."""
     try:
-        response = requests.delete(
+        requests.delete(
             f"{ML_CLIENT_HISTORY_URL}/{record_id}",
             timeout=ML_CLIENT_TIMEOUT_SECONDS,
         )
     except requests.RequestException:
         pass
-    
+
     # After deleting (or failing), redirect to the history page
-    from flask import redirect, url_for
     return redirect("/history")
 
 if __name__ == "__main__":
