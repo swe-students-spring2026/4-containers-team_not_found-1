@@ -7,14 +7,25 @@
 
 A containerized machine learning application composed of three distinct subsystems designed to automatically recognize and classify user-drawn doodles over a web interface. User can use this web app to practice their doodle drawing skills.
 
+## Team Members
+* [ZhiHui Chen](https://github.com/Zhi-Hui-C)
+* [Yash Pazhianur](https://github.com/yashpaz123)
+* [Jeffrey Solano](https://github.com/jeffnoso)
+
+## System Architecture
+
+The system consists of three interconnected services:
+
 1. **Web App**: A user-facing Flask web dashboard where clients can draw doodles to be analyzed.
 2. **Machine Learning Client**: A backend Python service utilizing a pre-trained Hugging Face Quick Draw model to predict what the user drew.
 3. **Database**: A centralized MongoDB instance persisting prediction metadata, drawings, and history.
 
-## Team Members
-* [ZhiHui Chen](https://github.com/Zhi-Hui-C)
-* [Yash Pazhianur](https://github.com/yashpaz123)
-* [Jeffrey Solano] (https://github.com/jeffnoso)
+## How it works
+1. A user draws a doodle on the web interface
+2. The drawing is sent to the Machine Learning Client
+3. The Machine Learning model processes the image and predicts a label
+4. The prediction and image data are stored in MongoDB
+5. The Web App retrieves and displays results in the History tab
 
 ## Configuration & Usage
 
